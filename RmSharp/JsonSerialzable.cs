@@ -1,9 +1,9 @@
 ﻿using System.Text.Json.Nodes;
 
-namespace RubyMarshal
+namespace RmSharp
 {
     public interface IJsonSerialzable
     {
-        public abstract JsonNode? ToJson();
+        public abstract JsonNode? ToJson( );
     }
 }

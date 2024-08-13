@@ -1,11 +1,14 @@
-﻿using RubyMarshal.Reader;
-using RubyMarshal.Types;
+﻿using RmSharp.Reader;
+using RmSharp.Types;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
-namespace RubyMarshal
+namespace RmSharp
 {
     public class Decoder
     {
-        internal static Dictionary<byte, BaseReader> ReaderMap { get; private set; } = new()
+        internal static Dictionary<byte, BaseReader> ReaderMap { get; private set; } = new( )
         {
             {(byte)'[',new ArrayReader() },
             {(byte)'"',new Reader.StringReader() },
@@ -35,18 +38,18 @@ namespace RubyMarshal
         public List<Symbol> SymbolList { get; private set; } = [];
         public List<Base> ObjectReferenceList { get; private set; } = [];
 
-        public Decoder(){}
+        public Decoder( ) { }
 
-        public Base Decode(Stream stream)
+        public Base Decode( Stream stream )
         {
-            using (var br=new BinaryReader(stream))
+            using ( var br = new BinaryReader( stream ) )
             {
-                var signature = br.ReadInt16();
-                if (signature != 0x0804)
-                    throw new Exception("signature mismatch");
-                return ReaderMap[br.ReadByte()].Read(this,br,true);
+                var signature = br.ReadInt16( );
+                if ( signature != 0x0804 )
+                    throw new Exception( "signature mismatch" );
+                return ReaderMap[br.ReadByte( )].Read( this, br, true );
             }
-                
+
         }
     }
 }
