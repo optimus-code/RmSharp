@@ -1,35 +1,48 @@
-﻿using System;
+﻿using RmSharp.Tokens;
+using System;
 using System.IO;
-using RmSharp.Enums;
 
 namespace RmSharp.Converters
 {
     public abstract class RmConverter
     {
-        public abstract Type Type
-        {
-            get;
-        }
-
-        public abstract RubyControlToken[] Tokens
-        {
-            get;
-        }
-
         public abstract object Read( BinaryReader reader );
         public abstract void Write( BinaryWriter writer, object instance );
     }
 
-    public abstract class RmConverter<T> : RmConverter
+    public abstract class RmTypeConverter : RmConverter
     {
-        public override Type Type
+        public virtual Type Type
         {
             get;
-        } = typeof( T );
+            protected set;
+        }
 
-        public RmConverter( ) 
-            : base( )
+        public RmTypeConverter( Type type )
         {
+            Type = type;
+        }
+    }
+
+    public abstract class RmTypeConverter<T> : RmTypeConverter
+    {
+        public RmTypeConverter( ) : base( typeof( T ) )
+        {
+
+        }
+    }
+
+    public abstract class RmTokenConverter : RmConverter
+    {
+        public virtual RubyMarshalToken Token
+        {
+            get;
+            protected set;
+        }
+
+        public RmTokenConverter( RubyMarshalToken token )
+        {
+            Token = token;
         }
     }
 }

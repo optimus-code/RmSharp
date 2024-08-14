@@ -1,6 +1,6 @@
 ﻿using RmSharp.Exceptions;
+using System;
 using System.IO;
-using System.Text;
 
 namespace RmSharp
 {
@@ -12,7 +12,7 @@ namespace RmSharp
         {
             using ( var reader = new RmReader( stream ) )
             {
-                var header = reader.ReadHeader();
+                var header = reader.ReadHeader( );
 
                 if ( header != HEADER_SIGNATURE )
                     throw new RmException( $"Invalid header signature, expected {HEADER_SIGNATURE:X4} but got {header:X4}" );
@@ -23,11 +23,7 @@ namespace RmSharp
 
         public static void Serialise<T>( Stream stream, T value )
         {
-            using ( var writer = new LcfWriter( stream ) )
-            {
-                WriteHeader( writer, currentOptions );
-                writer.Serialise( value );
-            }
+            throw new NotImplementedException( );
         }
     }
 }

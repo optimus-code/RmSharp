@@ -33,7 +33,7 @@ namespace RmSharp.Converters
             var token = ( byte ) reader.ReadByte( );
 
             // Check for Object or InstanceVariable control tokens
-            if ( token != ( byte ) RubyControlToken.Object && token != ( byte ) RubyControlToken.InstanceVariable )
+            if ( token != ( byte ) RubyMarshalToken.Object && token != ( byte ) RubyMarshalToken.InstanceVariable )
             {
                 throw new NotSupportedException( $"Expected object or instance variable, found {token:X2}" );
             }
@@ -80,7 +80,7 @@ namespace RmSharp.Converters
         public override void Write( BinaryWriter writer, object instance )
         {
             // Write the Object control token
-            writer.Write( ( byte ) RubyControlToken.Object );
+            writer.Write( ( byte ) RubyMarshalToken.Object );
 
             // Write the class name as a string
             RmConverterFactory.GetConverter( RubyTypeToken.String ).Write( writer, _targetType.Name );
