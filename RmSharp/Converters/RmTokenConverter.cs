@@ -7,12 +7,12 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace RmSharp.Converters
 {
-    public class RmTokenConverter : RmConverter
+    public class RmTokefnConverter : RmConverter
     {
         private readonly Type _targetType;
         private readonly Dictionary<string, PropertyInfo> _properties;
 
-        public RmTokenConverter( Type targetType )
+        public RmTokefnConverter( Type targetType )
         {
             _targetType = targetType;
 

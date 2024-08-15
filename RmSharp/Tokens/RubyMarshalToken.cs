@@ -77,7 +77,6 @@
         /// </remarks>
         Module = 0x6D,
 
-
         /// <summary>
         /// Represents an array ('[' token).
         /// </summary>
@@ -85,38 +84,6 @@
         /// This token is used to indicate the start of a serialized Ruby array.
         /// </remarks>
         Array = 0x5B,
-
-        /// <summary>
-        /// Represents a string ('"' token).
-        /// </summary>
-        /// <remarks>
-        /// This token is used to serialize Ruby strings.
-        /// </remarks>
-        String = 0x22,
-
-        /// <summary>
-        /// Represents a bignum ('l' token).
-        /// </summary>
-        /// <remarks>
-        /// This token is used to serialize large integers (Bignum) in Ruby.
-        /// </remarks>
-        Bignum = 0x6C,
-
-        /// <summary>
-        /// Represents a fixnum ('i' token).
-        /// </summary>
-        /// <remarks>
-        /// This token is used to serialize small integers (Fixnum) in Ruby.
-        /// </remarks>
-        Fixnum = 0x69,
-
-        /// <summary>
-        /// Represents a floating-point number ('f' token).
-        /// </summary>
-        /// <remarks>
-        /// This token is used to serialize floating-point numbers (Float) in Ruby.
-        /// </remarks>
-        Single = 0x66,
 
         /// <summary>
         /// Represents a regular expression ('/' token).
@@ -174,6 +141,8 @@
         /// </remarks>
         DefaultHash = 0x7D,
 
+        // Basic value tokens
+
         /// <summary>
         /// Represents a nil value ('0' token).
         /// </summary>
@@ -197,5 +166,37 @@
         /// This token is used to indicate a false boolean value in Ruby.
         /// </remarks>
         False = 0x46,
+
+        /// <summary>
+        /// Represents a string ('"' token).
+        /// </summary>
+        /// <remarks>
+        /// This token is used to serialize Ruby strings.
+        /// </remarks>
+        String = 0x22,
+
+        /// <summary>
+        /// Represents a bignum ('l' token).
+        /// </summary>
+        /// <remarks>
+        /// This token is used to serialize large integers (Bignum) in Ruby.
+        /// </remarks>
+        Bignum = 0x6C,
+
+        /// <summary>
+        /// Represents a fixnum ('i' token).
+        /// </summary>
+        /// <remarks>
+        /// This token is used to serialize small integers (Fixnum) in Ruby.
+        /// </remarks>
+        Fixnum = 0x69,
+
+        /// <summary>
+        /// Represents a floating-point number ('f' token).
+        /// </summary>
+        /// <remarks>
+        /// This token is used to serialize floating-point numbers (Float) in Ruby.
+        /// </remarks>
+        Single = 0x66,
     }
 }
