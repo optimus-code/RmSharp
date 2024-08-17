@@ -1,19 +1,19 @@
 ﻿using RmSharp.Extensions;
 using System.IO;
+using System.Numerics;
 
-namespace RmSharp.Converters.Types
+namespace RmSharp.Converters.Types.Basic
 {
-    public class RmInt32Converter : RmTypeConverter<int>
+    public class BigIntegerConverter : RmTypeConverter<BigInteger>
     {
         public override object Read( BinaryReader reader )
         {
-            return reader.ReadFixNum<int>( );
+            return reader.ReadNumeric<BigInteger>( );
         }
 
         public override void Write( BinaryWriter writer, object instance )
         {
-            int value = ( int ) instance;
-            writer.Write( value );
+            writer.WriteNumeric( instance );
         }
     }
 }

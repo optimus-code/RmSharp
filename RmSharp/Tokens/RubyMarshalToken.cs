@@ -197,6 +197,6 @@
         /// <remarks>
         /// This token is used to serialize floating-point numbers (Float) in Ruby.
         /// </remarks>
-        Single = 0x66,
+        Double = 0x66,
     }
 }

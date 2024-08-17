@@ -1,18 +1,18 @@
 ﻿using RmSharp.Extensions;
 using System.IO;
 
-namespace RmSharp.Converters.Types
+namespace RmSharp.Converters.Types.Basic
 {
-    public class Int32Converter : RmTypeConverter<int>
+    public class Int64Converter : RmTypeConverter<long>
     {
         public override object Read( BinaryReader reader )
         {
-            return reader.ReadFixNum<int>( );
+            return reader.ReadNumeric<long>( );
         }
 
         public override void Write( BinaryWriter writer, object instance )
         {
-            writer.WriteFixNum( instance );
+            writer.WriteNumeric( instance );
         }
     }
 }

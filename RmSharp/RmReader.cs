@@ -19,8 +19,7 @@ namespace RmSharp
 
         private object Deserialise( Type type )
         {
-            var classReader = new LcfClassConverter( type );
-            return classReader.Read( _reader, null );
+            throw new NotImplementedException();
         }
 
         public short ReadHeader( )
