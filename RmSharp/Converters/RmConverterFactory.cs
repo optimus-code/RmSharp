@@ -1,4 +1,5 @@
-﻿using RmSharp.Converters.Types.Basic;
+﻿using RmSharp.Converters.Types;
+using RmSharp.Converters.Types.Basic;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -31,7 +32,18 @@ namespace RmSharp.Converters
             {
                 return converter;
             }
-
+            else if ( type.IsGenericType && type.GetGenericTypeDefinition() == typeof( List<> ) )
+            {
+                return new ListConverter( type );
+            }
+            else if ( type.IsArray )
+            {
+                return new ArrayConverter( type );
+            }
+            else if ( type.IsGenericType && type.GetGenericTypeDefinition( ) == typeof( Dictionary<,> ) )
+            {
+                return new DictionaryConverter( type );
+            }
             return null;
         }
     }

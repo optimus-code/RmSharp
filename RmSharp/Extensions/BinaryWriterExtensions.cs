@@ -132,7 +132,7 @@ namespace RmSharp.Extensions
         /// </summary>
         /// <param name="bw"></param>
         /// <param name="value"></param>
-        private static void WriteFixNum( this BinaryWriter bw, object value )
+        public static void WriteFixNum( this BinaryWriter bw, object value )
         {
             long numericValue;
 

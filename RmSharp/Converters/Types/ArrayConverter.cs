@@ -23,7 +23,7 @@ namespace RmSharp.Converters.Types
                 if ( token != RubyMarshalToken.Array )
                     return null;
 
-                var size = reader.ReadNumeric<int>( );
+                var size = reader.ReadFixNum<int>( );
 
                 Array array = Array.CreateInstance( Type.GetElementType( ), size );
 
@@ -43,7 +43,7 @@ namespace RmSharp.Converters.Types
 
             writer.WriteValue( array, RubyMarshalToken.Array, ( ) =>
             {
-                writer.WriteNumeric( array.Length );
+                writer.WriteFixNum( array.Length );
 
                 foreach ( var element in array )
                 {

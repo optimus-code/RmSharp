@@ -23,9 +23,9 @@ namespace RmSharp.Converters.Types
 
         public override object Read( BinaryReader reader )
         {
-            return reader.ReadValue( ( token ) =>
+            var value = reader.ReadValue( ( token ) =>
             {
-                var size = reader.ReadNumeric<int>( );
+                var size = reader.ReadFixNum<int>( );
 
                 var dictionary = ( IDictionary ) Activator.CreateInstance( Type );
 
@@ -42,6 +42,16 @@ namespace RmSharp.Converters.Types
 
                 return dictionary;
             }, RubyMarshalToken.Hash );
+
+            if ( reader.PeekByte( out var byteValue ) &&
+                byteValue == ( byte ) RubyMarshalToken.DefaultHash )
+            {
+                reader.ReadByte( ); // Read out the token
+                var defaultValue = _valueConverter.Read( reader );
+
+                // Do something with this later
+            }
+            return value;
         }
 
         public override void Write( BinaryWriter writer, object instance )
@@ -50,7 +60,7 @@ namespace RmSharp.Converters.Types
 
             writer.WriteValue( dictionary, RubyMarshalToken.Hash, ( ) =>
             {
-                writer.WriteNumeric( dictionary.Count );
+                writer.WriteFixNum( dictionary.Count );
 
                 foreach ( DictionaryEntry entry in dictionary )
                 {

@@ -25,7 +25,7 @@ namespace RmSharp.Converters.Types
                 if ( token != RubyMarshalToken.Array )
                     return null;
 
-                var size = reader.ReadNumeric<int>( );
+                var size = reader.ReadFixNum<int>( );
 
                 var list = ( IList ) Activator.CreateInstance( Type );
 
@@ -45,7 +45,7 @@ namespace RmSharp.Converters.Types
 
             writer.WriteValue( list, RubyMarshalToken.Array, ( ) =>
             {
-                writer.WriteNumeric( list.Count );
+                writer.WriteFixNum( list.Count );
 
                 foreach ( var element in list )
                 {

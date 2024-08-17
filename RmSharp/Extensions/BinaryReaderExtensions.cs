@@ -140,7 +140,7 @@ namespace RmSharp.Extensions
         /// <param name="br"></param>
         /// <returns></returns>
         /// <exception cref="InvalidCastException"></exception>
-        private static T ReadFixNum<T>( this BinaryReader br )
+        public static T ReadFixNum<T>( this BinaryReader br )
         {
             return ( T ) ReadFixNum( br, typeof( T ) );
         }
@@ -414,6 +414,22 @@ namespace RmSharp.Extensions
 
                 return new Regex( pattern, options );
             }, RubyMarshalToken.RegularExpression );
+        }
+
+        public static bool PeekByte( this BinaryReader br, out byte value )
+        {
+            value = 0x00;
+
+            var position = br.BaseStream.Position;
+
+            if ( position + 1 >= br.BaseStream.Length )
+                return false;
+
+            value = br.ReadByte( );
+
+            br.BaseStream.Seek( position, SeekOrigin.Begin );
+
+            return true;
         }
     }
 }
