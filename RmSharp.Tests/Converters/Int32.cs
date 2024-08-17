@@ -10,7 +10,7 @@ namespace RmSharp.Tests.Converters
         private readonly byte[] _rubyMarshalData32000 = new byte[] { 0x69, 0x02, 0x00, 0x7D };
         private readonly int _expectedValue32000 = 32000;
 
-        private readonly byte[] _rubyMarshalData3 = new byte[] { 0x69, 0x01, 0x03 };
+        private readonly byte[] _rubyMarshalData3 = new byte[] { 0x69, 0x08 };
         private readonly int _expectedValue3 = 3;
 
 

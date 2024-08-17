@@ -9,8 +9,7 @@ namespace RmSharp.Tests.Converters
         private readonly byte[] _rubyMarshalData = new byte[]
             {
                 (byte)RubyMarshalToken.Double, // Token indicating a double
-                0x01,      
-                0x03,                          // Length of the string "1.2\0\0\0\0" (8 bytes total)
+                0x08,                          // Length of the string "1.2\0\0\0\0" (8 bytes total)
                 0x31,                          // '1' in ASCII
                 0x2E,                          // '.' in ASCII
                 0x32,                          // '2' in ASCII

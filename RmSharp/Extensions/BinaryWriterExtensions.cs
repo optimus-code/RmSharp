@@ -184,49 +184,76 @@ namespace RmSharp.Extensions
             // Now encode the numericValue as Fixnum according to its range
             if ( numericValue == 0 )
             {
-                bw.Write( ( byte ) 0 );
+                bw.Write( ( byte ) 0 ); // 0 is encoded directly
             }
             else if ( numericValue > 0 && numericValue <= 122 )
             {
-                bw.Write( ( byte ) 1 );
-                bw.Write( ( byte ) numericValue );
+                // Directly encode small positive integers (range 1-122)
+                bw.Write( ( byte ) ( numericValue + 5 ) ); // Ruby Marshal format adds 5
             }
             else if ( numericValue < 0 && numericValue >= -123 )
             {
+                // Directly encode small negative integers (range -1 to -123)
+                bw.Write( ( byte ) ( numericValue - 5 ) ); // Ruby Marshal format subtracts 5
+            }
+            else if ( numericValue >= 123 && numericValue <= 0xFF )
+            {
+                // Values between 123 and 255 (2 bytes, 0x01 marker)
+                bw.Write( ( byte ) 1 ); // Marker indicating a single following byte
                 bw.Write( ( byte ) numericValue );
             }
-            else if ( numericValue > 122 && numericValue <= 0x7FFF )
+            else if ( numericValue >= -256 && numericValue <= -124 )
             {
-                // Values up to 32,767 require 2 bytes
-                bw.Write( ( byte ) 2 ); // Indicates that 2 bytes follow
+                // Negative values between -256 and -124 (2 bytes, 0xFF marker)
+                bw.Write( ( byte ) 0xFF ); // Marker indicating a single following negative byte
+                bw.Write( ( byte ) ( -numericValue ) ); // Convert to positive and write
+            }
+            else if ( numericValue >= 0x100 && numericValue <= 0x7FFF )
+            {
+                // Values that can fit into 2 bytes (3 bytes total)
+                bw.Write( ( byte ) 2 ); // Marker indicating two following bytes
                 bw.Write( ( ushort ) numericValue ); // Write 2-byte value
             }
-            else if ( numericValue > 0x7FFF && numericValue <= 0xFFFF )
+            else if ( numericValue >= -0x8000 && numericValue <= -257 )
             {
-                // Values from 32,768 to 65,535 (e.g., 50000) also require 2 bytes
-                bw.Write( ( byte ) 2 ); // Indicates that 2 bytes follow (not 3!)
-                bw.Write( ( ushort ) numericValue ); // Write 2-byte value
+                // Negative values that can fit into 2 bytes (3 bytes total)
+                bw.Write( ( byte ) 0xFE ); // Marker indicating two following negative bytes
+                bw.Write( ( ushort ) ( -numericValue ) ); // Convert to positive and write
             }
-            else if ( numericValue > 0xFFFF && numericValue <= 0xFFFFFF )
+            else if ( numericValue >= 0x8000 && numericValue <= 0xFFFFFF )
             {
-                // Values up to 16,777,215 (2^24 - 1) require 3 bytes
-                bw.Write( ( byte ) 3 ); // Indicates that 3 bytes follow
+                // Values that can fit into 3 bytes (4 bytes total)
+                bw.Write( ( byte ) 3 ); // Marker indicating three following bytes
                 bw.Write( ( byte ) ( numericValue & 0xFF ) ); // LSB
                 bw.Write( ( byte ) ( ( numericValue >> 8 ) & 0xFF ) ); // Middle byte
                 bw.Write( ( byte ) ( ( numericValue >> 16 ) & 0xFF ) ); // MSB
             }
-            else if ( numericValue > 0xFFFFFF && numericValue <= 0x7FFFFFFF )
+            else if ( numericValue >= -0xFFFFFF && numericValue <= -0x8001 )
             {
-                // Values up to 2,147,483,647 (2^31 - 1) require 4 bytes
-                bw.Write( ( byte ) 4 ); // Indicates that 4 bytes follow
+                // Negative values that can fit into 3 bytes (4 bytes total)
+                bw.Write( ( byte ) 0xFD ); // Marker indicating three following negative bytes
+                uint absValue = ( uint ) ( -numericValue );
+                bw.Write( ( byte ) ( absValue & 0xFF ) ); // LSB
+                bw.Write( ( byte ) ( ( absValue >> 8 ) & 0xFF ) ); // Middle byte
+                bw.Write( ( byte ) ( ( absValue >> 16 ) & 0xFF ) ); // MSB
+            }
+            else if ( numericValue >= 0x1000000 && numericValue <= 0x7FFFFFFF )
+            {
+                // Values that can fit into 4 bytes (5 bytes total)
+                bw.Write( ( byte ) 4 ); // Marker indicating four following bytes
                 bw.Write( ( int ) numericValue ); // Write 4-byte value
+            }
+            else if ( numericValue >= -0x80000000 && numericValue <= -0x1000001 )
+            {
+                // Negative values that can fit into 4 bytes (5 bytes total)
+                bw.Write( ( byte ) 0xFC ); // Marker indicating four following negative bytes
+                bw.Write( ( uint ) ( -numericValue ) ); // Convert to positive and write
             }
             else
             {
                 throw new InvalidCastException( "Value exceeds Fixnum range, consider Bignum" );
             }
         }
-
 
         /// <summary>
         /// Write a Ruby BigNum to the stream.

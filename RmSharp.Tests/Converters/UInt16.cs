@@ -6,7 +6,7 @@ namespace RmSharp.Tests.Converters
     [TestClass]
     public class UInt16
     {
-        private readonly byte[] _rubyMarshalData = new byte[] { ( byte ) RubyMarshalToken.Fixnum, 0x02, 0x50, 0xC3 };  // Represents `50000` for a 16-bit unsigned integer
+        private readonly byte[] _rubyMarshalData = new byte[] { ( byte ) RubyMarshalToken.Fixnum, 0x03, 0x50, 0xC3, 0x00 };  // Represents `50000` for a 16-bit unsigned integer
         private readonly ushort _expectedValue = 50000;
 
         [TestMethod]

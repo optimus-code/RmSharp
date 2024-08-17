@@ -8,14 +8,14 @@ namespace RmSharp.Tests.Converters
     {
         private readonly byte[] _rubyMarshalData = new byte[] {
 
-            ( byte ) RubyMarshalToken.Hash, 0x01, 0x04,
-            ( byte ) RubyMarshalToken.String, 0x01, 0x01, ( byte ) 'A',
+            ( byte ) RubyMarshalToken.Hash, 0x09,
+            ( byte ) RubyMarshalToken.String, 0x06, ( byte ) 'A',
             ( byte ) RubyMarshalToken.Fixnum, 0x02, 0xD2, 0x04,
-            ( byte ) RubyMarshalToken.String, 0x01, 0x01, ( byte ) 'B',
+            ( byte ) RubyMarshalToken.String, 0x06, ( byte ) 'B',
             ( byte ) RubyMarshalToken.Fixnum, 0x02, 0xD2, 0x04,
-            ( byte ) RubyMarshalToken.String, 0x01, 0x01, ( byte ) 'C',
+            ( byte ) RubyMarshalToken.String, 0x06, ( byte ) 'C',
             ( byte ) RubyMarshalToken.Fixnum, 0x02, 0xD2, 0x04,
-            ( byte ) RubyMarshalToken.String, 0x01, 0x01, ( byte ) 'D',
+            ( byte ) RubyMarshalToken.String, 0x06, ( byte ) 'D',
             ( byte ) RubyMarshalToken.Fixnum, 0x02, 0xD2, 0x04,
         };
 

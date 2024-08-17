@@ -11,8 +11,7 @@ namespace RmSharp.Tests.Converters
    {
     (byte)RubyMarshalToken.Bignum, // Bignum token (0x2B)
     (byte)'+',                     // Sign byte ('+' for positive)
-    0x01,                          // Indicates its a byte range value FixNum
-    0x03,                          // Length of the Bignum in shorts (2.5 shorts, 5 bytes)
+    0x08,                          // Length of the Bignum in shorts (2.5 shorts, 5 bytes)
     0x00, 0xE4,                    // 1st short (0x00E4)
     0x0B, 0x54,                    // 2nd short (0x540B)
     0x02                        // Half-short (0x02)

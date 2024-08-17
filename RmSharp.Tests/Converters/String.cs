@@ -6,7 +6,7 @@ namespace RmSharp.Tests.Converters
     [TestClass]
     public class String
     {
-        private readonly byte[] _rubyMarshalData = new byte[] { ( byte ) RubyMarshalToken.String, 0x01, 0x0b, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 0x72, 0x6c, 0x64 };  // Represents `"Hello World"`
+        private readonly byte[] _rubyMarshalData = new byte[] { ( byte ) RubyMarshalToken.String, 0x10, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 0x72, 0x6c, 0x64 };  // Represents `"Hello World"`
         private readonly string _expectedValue = "Hello World";
 
         [TestMethod]
