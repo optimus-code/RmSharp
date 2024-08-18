@@ -1,13 +1,11 @@
 ﻿using RmSharp.Exceptions;
 using RmSharp.Tokens;
-using RmSharp.Types;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -66,14 +64,10 @@ namespace RmSharp.Extensions
             if ( onRead == null )
                 throw new RmException( "No onRead callback specified" );
 
-            // Append the Nil token to the expected tokens
             var token = reader.ReadToken( [..expected, RubyMarshalToken.Nil] );
 
             if ( token == RubyMarshalToken.Nil )
-            {
-                // Return null for reference types, or the default value for value types
                 return GetDefaultForType( onRead.Method?.ReturnType );
-            }
 
             return onRead.Invoke( token );
         }
@@ -88,13 +82,9 @@ namespace RmSharp.Extensions
             if ( type == null )
                 return null;
 
-            // Handle value types by creating an instance of the type, which gives the default value
             if ( type.IsValueType )
-            {
                 return Activator.CreateInstance( type );
-            }
 
-            // Return null for reference types
             return null;
         }
 
@@ -281,50 +271,37 @@ namespace RmSharp.Extensions
         /// <exception cref="InvalidCastException"></exception>
         private static object ReadBigNum( this BinaryReader br, Type type )
         {
-            // Read the sign byte
             var sign = br.ReadByte( );
-
-            // Read the number of 16-bit "shorts"
             var numShorts = br.ReadFixNum<int>( );
 
-            // Prepare a list to collect the bytes
             var byteList = new List<byte>( );
 
-            for ( int i = 0; i < numShorts; i++ )
+            for ( var i = 0; i < numShorts; i++ )
             {
-                // Read each short (2 bytes)
-                byteList.Add( br.ReadByte( ) ); // First byte of the short
+                byteList.Add( br.ReadByte( ) );
 
                 if ( br.BaseStream.Position + 1 > br.BaseStream.Length )
                     break;
 
                 if ( i == numShorts - 1 && ( byteList.Count % 2 == 1 ) )
                 {
-                    // If it's the last item and doesn't complete a short, peek to check if the next byte is a RubyMarshalToken
-                    byte nextByte = ( byte ) br.PeekChar( );
+                    var nextByte = ( byte ) br.PeekChar( );
 
-                    // RubyMarshalToken values are typically small (e.g., Fixnum, String, Array, etc.), 
-                    // so if nextByte matches a known RubyMarshalToken, stop reading.
-                    if ( Enum.IsDefined( ( RubyMarshalToken ) nextByte ) )
+                    if ( Enum.IsDefined( typeof( RubyMarshalToken ), nextByte ) )
                     {
                         break;
                     }
                 }
 
-                // If it isn't the end or if the next byte doesn't match a token, read the second byte
                 byteList.Add( br.ReadByte( ) );
             }
 
-            // Convert the list to an array
-            byte[] magnitudeBytes = byteList.ToArray( );
+            var buffer = byteList.ToArray( );
+            var temp = new BigInteger( buffer );
 
-            // Create the BigInteger using the little-endian byte array
-            BigInteger temp = new BigInteger( magnitudeBytes );
-
-            // Apply the sign
             if ( sign == ( byte ) '+' )
             {
-                return type == typeof( BigInteger ) ? ( object ) temp : ( object ) ( ulong ) temp;
+                return type == typeof( BigInteger ) ? temp : ( ulong ) temp;
             }
             else if ( sign == ( byte ) '-' )
             {
@@ -334,11 +311,6 @@ namespace RmSharp.Extensions
 
             throw new NotSupportedException( "Invalid sign byte in Ruby Bignum." );
         }
-
-
-
-
-
 
         /// <summary>
         /// Read a Ruby BigNum of the specified type.
@@ -360,24 +332,26 @@ namespace RmSharp.Extensions
         {
             return br.ReadValue( ( token ) =>
             {
-                // Read the length of the string (stored as a Fixnum)
-                int length = br.ReadFixNum<int>( );
+                var length = br.ReadFixNum<int>( );
+                var buffer = br.ReadBytes( length );
 
-                // Read the string bytes
-                byte[] stringBytes = br.ReadBytes( length );
+                var text = Encoding.ASCII.GetString( buffer );
 
-                // Convert the string bytes to a string
-                var floatString = Encoding.ASCII.GetString( stringBytes );
+                var index = text.IndexOf( '\0' );
+                text = index == -1 ? text : text[0..index];
 
-                int index = floatString.IndexOf( '\0' );
-                floatString = index == -1 ? floatString : floatString[0..index];
-
-                return double.Parse( floatString, CultureInfo.InvariantCulture );
+                return double.Parse( text, CultureInfo.InvariantCulture );
             }, RubyMarshalToken.Double );
         }
 
-        public static string ReadRubyString( this BinaryReader br )
+        public static string ReadRubyString( this BinaryReader br, bool hasToken = true )
         {
+            if ( !hasToken )
+            {
+                var length = br.ReadFixNum<int>( );
+                return Encoding.UTF8.GetString( br.ReadBytes( length ) );
+            }
+
             return br.ReadValue( ( token ) =>
             {
                 if ( token == RubyMarshalToken.Nil )
@@ -390,7 +364,7 @@ namespace RmSharp.Extensions
             }, RubyMarshalToken.String );
         }
 
-        public static System.Text.RegularExpressions.Regex ReadRegex( this BinaryReader br )
+        public static Regex ReadRegex( this BinaryReader br )
         {
             return br.ReadValue( ( token ) =>
             {

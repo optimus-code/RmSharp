@@ -1,14 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+	<TargetFrameworks>net8.0;net6.0;netstandard2.1;</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
 	<LangVersion>latest</LangVersion>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="Types\" />
-  </ItemGroup>
+	
+  <PropertyGroup>
+	  <PackageId>RmSharp</PackageId>
+	  <Version>0.0.1</Version>
+	  <Authors>optimus-code;HNIdesu</Authors>
+	  <Product>RmSharp</Product>
+	  <Description>RmSharp is a .NET library for handling Ruby Marshal data structures, providing essential functionalities for reading, writing, and manipulating Ruby Marshal files.</Description>
+	  <PackageTags>rmsharp;library;ruby;marshal</PackageTags>
+	  <RepositoryUrl>https://github.com/optimus-code/RmSharp</RepositoryUrl>
+	  <RepositoryType>git</RepositoryType>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageProjectUrl>https://github.com/optimus-code/RmSharp</PackageProjectUrl>
+	  <PackageIconUrl>https://raw.githubusercontent.com/optimus-code/RmSharp/main/icon.png</PackageIconUrl>
+  </PropertyGroup>
 
 </Project>

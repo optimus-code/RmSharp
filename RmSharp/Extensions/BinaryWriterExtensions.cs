@@ -262,28 +262,21 @@ namespace RmSharp.Extensions
         /// <param name="value"></param>
         private static void WriteBigNum( this BinaryWriter bw, BigInteger value )
         {
-            // Determine the sign and write the corresponding token
             bw.Write( value.Sign >= 0 ? ( byte ) '+' : ( byte ) '-' );
 
-            // Convert to absolute value for writing
-            BigInteger absValue = BigInteger.Abs( value );
+            var absValue = BigInteger.Abs( value );
 
-            // Get the byte array representation of the BigInteger
-            byte[] magnitude = absValue.ToByteArray( );
+            var buffer = absValue.ToByteArray( );
 
-            // Adjust the length to account for rounding up to the nearest short
-            int lengthInBytes = magnitude.Length;
+            var lengthInBytes = buffer.Length;
+
             if ( lengthInBytes % 2 != 0 )
-            {
-                lengthInBytes++; // Ensure length is rounded up to the nearest even number
-            }
-            int lengthInShorts = lengthInBytes / 2;
+                lengthInBytes++;
 
-            // Write the length in shorts as a Fixnum
+            var lengthInShorts = lengthInBytes / 2;
+
             bw.WriteFixNum( lengthInShorts );
-
-            // Write the magnitude bytes
-            bw.Write( magnitude );
+            bw.Write( buffer );
         }
 
         /// <summary>
@@ -295,20 +288,24 @@ namespace RmSharp.Extensions
         {
             bw.Write( RubyMarshalToken.Double );
 
-            // Convert the double to a string with invariant culture
-            var floatString = value.ToString( "R", System.Globalization.CultureInfo.InvariantCulture );
-            byte[] stringBytes = System.Text.Encoding.ASCII.GetBytes( floatString );
+            var text = value.ToString( "R", System.Globalization.CultureInfo.InvariantCulture );
+            var buffer = Encoding.ASCII.GetBytes( text );
 
-            // Write the length of the string (as a Fixnum) - Actual length of the string without padding
-            bw.WriteFixNum( stringBytes.Length );
-
-            // Write the string bytes
-            bw.Write( stringBytes );
+            bw.WriteFixNum( buffer.Length );
+            bw.Write( buffer );
         }
 
 
-        public static void WriteRubyString( this BinaryWriter bw, string value )
+        public static void WriteRubyString( this BinaryWriter bw, string value, bool writeToken = true )
         {
+            if ( !writeToken )
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes( value );
+                bw.WriteFixNum( bytes.Length );
+                bw.Write( bytes );
+                return;
+            }
+
             bw.WriteValue( value, RubyMarshalToken.String, ( ) =>
             {
                 byte[] bytes = Encoding.UTF8.GetBytes( value );

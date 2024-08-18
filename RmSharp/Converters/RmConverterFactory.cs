@@ -9,6 +9,12 @@ namespace RmSharp.Converters
 {
     public static class RmConverterFactory
     {
+        public static SymbolConverter SymbolConverter
+        {
+            get;
+            private set;
+        } = new( );
+
         private static readonly Dictionary<Type, RmTypeConverter> _typeConverters =
             new Dictionary<Type, RmTypeConverter>
             {
@@ -25,6 +31,8 @@ namespace RmSharp.Converters
                 { typeof( uint ), new UInt32Converter( ) },
                 { typeof( ulong ), new UInt64Converter( ) },
             };
+
+        private static readonly Dictionary<Type, RmTypeConverter> _classConverters = [];
 
         public static RmTypeConverter GetConverter( Type type )
         {
@@ -44,7 +52,23 @@ namespace RmSharp.Converters
             {
                 return new DictionaryConverter( type );
             }
+            else if ( type.IsClass )
+            {
+                if ( _classConverters.TryGetValue( type, out converter ) )
+                {
+                    return converter;
+                }
+
+                converter = new ClassConverter( type );
+                _classConverters.Add( type, converter );
+                return converter;
+            }
             return null;
+        }
+
+        public static void Reset( )
+        {
+            SymbolConverter.Reset( );
         }
     }
 }

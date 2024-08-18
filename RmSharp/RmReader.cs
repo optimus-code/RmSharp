@@ -1,10 +1,14 @@
 ﻿using System.IO;
 using System;
+using RmSharp.Converters;
+using RmSharp.Exceptions;
 
 namespace RmSharp
 {
     public class RmReader : IDisposable
     {
+        const short HEADER_SIGNATURE = 0x0804;
+
         private readonly BinaryReader _reader;
 
         public RmReader( Stream stream )
@@ -17,12 +21,22 @@ namespace RmSharp
             return ( T ) Deserialise( typeof( T ) );
         }
 
-        private object Deserialise( Type type )
+        public object Deserialise( Type type )
         {
-            throw new NotImplementedException();
+            var header = ReadHeader( );
+
+            if ( header != HEADER_SIGNATURE )
+                throw new RmException( $"Invalid header signature, expected {HEADER_SIGNATURE:X4} but got {header:X4}" );
+
+            var converter = RmConverterFactory.GetConverter( type );
+
+            if ( converter == null )
+                throw new RmException( $"No converter for type '{type.FullName}'." );
+
+            return converter.Read( _reader );
         }
 
-        public short ReadHeader( )
+        private short ReadHeader( )
         {
             return _reader.ReadInt16( );
         }
