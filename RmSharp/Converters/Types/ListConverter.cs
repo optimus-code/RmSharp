@@ -10,7 +10,7 @@ namespace RmSharp.Converters.Types
 {
     public class ListConverter : RmTypeConverter
     {
-        private readonly RmTypeConverter _elementConverter;
+        private readonly RmConverter _elementConverter;
 
         public ListConverter( Type type ) : base( type )
         {

@@ -1,7 +1,9 @@
 ﻿using RmSharp.Converters.Types;
 using RmSharp.Converters.Types.Basic;
+using RmSharp.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Numerics;
 using System.Text.RegularExpressions;
 
@@ -32,11 +34,58 @@ namespace RmSharp.Converters
                 { typeof( ulong ), new UInt64Converter( ) },
             };
 
-        private static readonly Dictionary<Type, RmTypeConverter> _classConverters = [];
 
-        public static RmTypeConverter GetConverter( Type type )
+        private static readonly Dictionary<RubyMarshalToken, RmTypeConverter> _tokenMap =
+            new Dictionary<RubyMarshalToken, RmTypeConverter>
+            {
+                { RubyMarshalToken.Bignum, _typeConverters[typeof( BigInteger )]},
+                { RubyMarshalToken.True, _typeConverters[typeof( bool )]},
+                { RubyMarshalToken.False, _typeConverters[typeof( bool )]},
+                { RubyMarshalToken.Double, _typeConverters[typeof( double )]},
+                { RubyMarshalToken.Fixnum, _typeConverters[typeof( long )]},
+                { RubyMarshalToken.String, _typeConverters[typeof( string )]}
+            };
+
+        private static readonly Dictionary<Type, RmTypeConverter> _classConverters = [];
+        private static readonly DynamicConverter _dynamicConverter = new( );
+
+        public static RmTypeConverter GetConverter( RubyMarshalToken token )
         {
-            if ( _typeConverters.TryGetValue( type, out var converter ) )
+            if ( _tokenMap.TryGetValue( token, out var converter ) )
+                return converter;
+
+            if ( token == RubyMarshalToken.Array )
+            {
+                return new ListConverter( typeof( List<dynamic> ) );
+            }
+            else if ( token == RubyMarshalToken.Hash )
+            {
+                return new DictionaryConverter( typeof( Dictionary<dynamic, dynamic> ) );
+            }
+            else if ( token == RubyMarshalToken.Object )
+            {
+                // Handle this, it'll need to find the appropriate type based on name...
+
+                //if ( _classConverters.TryGetValue( type, out converter ) )
+                //{
+                //    return converter;
+                //}
+
+                //converter = new ClassConverter( type );
+                //_classConverters.Add( type, converter );
+                //return converter;
+            }
+
+            return null;
+        }
+
+        public static RmConverter GetConverter( Type type )
+        {
+            if ( typeof( object ) == type || typeof( IDynamicMetaObjectProvider ).IsAssignableFrom( type ) )
+            {
+                return _dynamicConverter;
+            }
+            else if ( _typeConverters.TryGetValue( type, out var converter ) )
             {
                 return converter;
             }
@@ -63,6 +112,7 @@ namespace RmSharp.Converters
                 _classConverters.Add( type, converter );
                 return converter;
             }
+
             return null;
         }
 

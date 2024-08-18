@@ -8,7 +8,7 @@ namespace RmSharp.Converters.Types
 {
     public class ArrayConverter : RmTypeConverter
     {
-        private readonly RmTypeConverter _elementConverter;
+        private readonly RmConverter _elementConverter;
 
         public ArrayConverter( Type type ) : base( type )
         {

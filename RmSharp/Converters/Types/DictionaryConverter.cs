@@ -8,8 +8,8 @@ namespace RmSharp.Converters.Types
 {
     public class DictionaryConverter : RmTypeConverter
     {
-        private readonly RmTypeConverter _keyConverter;
-        private readonly RmTypeConverter _valueConverter;
+        private readonly RmConverter _keyConverter;
+        private readonly RmConverter _valueConverter;
 
         public DictionaryConverter( Type type ) : base( type )
         {

@@ -4,26 +4,22 @@ using RmSharp.Tokens;
 namespace RmSharp.Tests.Converters
 {
     [TestClass]
-    public class Double
+    public class Dynamic
     {
-        private readonly byte[] _rubyMarshalData = new byte[]
-            {
-                ( byte ) RubyMarshalToken.Double, 0x08, 0x31, 0x2E, 0x32
-            };
-
-        private readonly double _expectedValue = 1.2;
+        private readonly byte[] _rubyMarshalData = new byte[] { ( byte ) RubyMarshalToken.Fixnum, 0x02, 0xD2, 0x04 };
+        private readonly dynamic _expectedValue = 1234;
 
         [TestMethod]
         public void Read( )
         {
-            var converter = RmConverterFactory.GetConverter( typeof( double ) );
+            var converter = RmConverterFactory.GetConverter( _expectedValue.GetType( ) );
             using ( var memoryStream = new MemoryStream( _rubyMarshalData ) )
             using ( var reader = new BinaryReader( memoryStream ) )
             {
                 var result = converter.Read( reader );
 
                 Assert.IsNotNull( result );
-                Assert.IsInstanceOfType( result, typeof( double ) );
+                Assert.IsInstanceOfType( result, _expectedValue.GetType( ) );
                 Assert.AreEqual( _expectedValue, result );
             }
         }
@@ -31,7 +27,7 @@ namespace RmSharp.Tests.Converters
         [TestMethod]
         public void Write( )
         {
-            var converter = RmConverterFactory.GetConverter( typeof( double ) );
+            var converter = RmConverterFactory.GetConverter( _expectedValue.GetType( ) );
             using ( var memoryStream = new MemoryStream( ) )
             using ( var writer = new BinaryWriter( memoryStream ) )
             {
