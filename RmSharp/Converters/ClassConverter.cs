@@ -76,7 +76,7 @@ namespace RmSharp.Converters
                 }
 
                 return instance;
-            }, RubyMarshalToken.Object );
+            }, RubyMarshalToken.Object, RubyMarshalToken.UserClass );
         }
 
         public override void Write( BinaryWriter writer, object instance )

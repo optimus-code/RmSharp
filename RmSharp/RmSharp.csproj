@@ -9,7 +9,7 @@
 	
   <PropertyGroup>
 	  <PackageId>RmSharp</PackageId>
-	  <Version>0.0.2</Version>
+	  <Version>0.0.3</Version>
 	  <Authors>optimus-code;HNIdesu</Authors>
 	  <Product>RmSharp</Product>
 	  <Description>RmSharp is a .NET library for handling Ruby Marshal data structures, providing essential functionalities for reading, writing, and manipulating Ruby Marshal files.</Description>
