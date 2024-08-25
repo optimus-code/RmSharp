@@ -328,8 +328,25 @@ namespace RmSharp.Extensions
         /// </summary>
         /// <param name="br"></param>
         /// <returns></returns>
-        public static double ReadDoubleCustom( this BinaryReader br )
+        public static double ReadDoubleCustom( this BinaryReader br, bool hasToken = true )
         {
+            if ( !hasToken )
+            {
+                var length = br.ReadFixNum<int>( );
+
+                if ( length == 0 )
+                    return default;
+
+                var buffer = br.ReadBytes( length );
+
+                var text = Encoding.ASCII.GetString( buffer );
+
+                var index = text.IndexOf( '\0' );
+                text = index == -1 ? text : text[0..index];
+
+                return double.Parse( text, CultureInfo.InvariantCulture );
+            }
+
             return br.ReadValue( ( token ) =>
             {
                 var length = br.ReadFixNum<int>( );

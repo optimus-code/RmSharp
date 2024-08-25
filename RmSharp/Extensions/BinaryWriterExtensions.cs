@@ -284,9 +284,10 @@ namespace RmSharp.Extensions
         /// </summary>
         /// <param name="bw"></param>
         /// <param name="value"></param>
-        public static void WriteDouble( this BinaryWriter bw, double value )
+        public static void WriteDouble( this BinaryWriter bw, double value, bool writeToken = true )
         {
-            bw.Write( RubyMarshalToken.Double );
+            if ( writeToken )
+                bw.Write( RubyMarshalToken.Double );
 
             var text = value.ToString( "R", System.Globalization.CultureInfo.InvariantCulture );
             var buffer = Encoding.ASCII.GetBytes( text );

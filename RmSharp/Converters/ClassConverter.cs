@@ -66,7 +66,9 @@ namespace RmSharp.Converters
                     if ( property == null )
                         throw new RmException( $"Instance variable '{symbolName}' not found in type '{Type.FullName}'." );
 
-                    var typeConverter = RmConverterFactory.GetConverter( property.PropertyType );
+                    var bufferAttribute = property.GetCustomAttribute<RmBufferAttribute>( );
+
+                    var typeConverter = bufferAttribute != null ? new BufferConverter( bufferAttribute ) : GetConverter( property );
 
                     if ( typeConverter == null )
                         throw new RmException( $"No type converter found for '{property.PropertyType.FullName}'." );
@@ -76,7 +78,19 @@ namespace RmSharp.Converters
                 }
 
                 return instance;
-            }, RubyMarshalToken.Object, RubyMarshalToken.UserClass );
+            }, RubyMarshalToken.Object );
+        }
+
+        private RmConverter GetConverter( PropertyInfo property )
+        {
+            var converterAttribute = property.GetCustomAttribute<RmConverterAttribute>( );
+
+            if ( converterAttribute?.Converter != null )
+            {
+                return ( RmConverter ) Activator.CreateInstance( converterAttribute.Converter );
+            }
+
+            return RmConverterFactory.GetConverter( property.PropertyType );
         }
 
         public override void Write( BinaryWriter writer, object instance )
@@ -93,7 +107,9 @@ namespace RmSharp.Converters
 
                     _symbolConverter.Write( writer, rubyName );
 
-                    var typeConverter = RmConverterFactory.GetConverter( instanceVariable.Item1.PropertyType );
+                    var bufferAttribute = instanceVariable.Item1.GetCustomAttribute<RmBufferAttribute>( );
+
+                    var typeConverter = bufferAttribute != null ? new BufferConverter( bufferAttribute ) : GetConverter( instanceVariable.Item1 );
 
                     if ( typeConverter == null )
                         throw new RmException( $"No type converter found for '{instanceVariable.Item1.PropertyType.FullName}'." );

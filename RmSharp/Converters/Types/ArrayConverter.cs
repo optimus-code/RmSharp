@@ -20,9 +20,6 @@ namespace RmSharp.Converters.Types
         {
             return reader.ReadValue( ( token ) =>
             {
-                if ( token != RubyMarshalToken.Array )
-                    return null;
-
                 var size = reader.ReadFixNum<int>( );
 
                 Array array = Array.CreateInstance( Type.GetElementType( ), size );

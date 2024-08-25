@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace RmSharp.Converters.Types
 {
@@ -23,7 +24,9 @@ namespace RmSharp.Converters.Types
             return reader.ReadValue( ( token ) =>
             {
                 if ( token != RubyMarshalToken.Array )
+                {
                     return null;
+                }
 
                 var size = reader.ReadFixNum<int>( );
 
